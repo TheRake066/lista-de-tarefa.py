@@ -38,7 +38,7 @@ paste <(figlet -f small "Notas") <(echo "
 
 ---
 
-Pronto, após isso o desenho já pode ser usado, mas é _importante_
+Pronto, após isso o desenho já pode ser usado, mas é importante
 lembrar que precisa está sempre na pasta downloads.
 ---
 ## Windows
