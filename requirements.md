@@ -1,6 +1,7 @@
 ## REQUISITOS⚠️
-embora o código seja simples, ele usa um arquivo de desenho para
-deixar a lista de tarefas minimante bonito, então para instalar o figlet
+embora o código seja simples e já funcione normalmente, ele usa um 
+arquivo de desenho para deixar a lista de tarefas minimante bonito 
+e então para isso você precisará instalar o figlet
 **use**:
 ```bash
 sudo apt update && sudo apt install figlet
