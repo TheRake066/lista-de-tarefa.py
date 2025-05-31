@@ -1,12 +1,12 @@
-## REQUISITOS
+## REQUISITOS⚠️
 embora o código seja simples, ele usa um arquivo de desenho para
 deixar a lista de tarefas minimante bonito, então para instalar o figlet
-use:
+**use**:
 ```bash
 sudo apt update && sudo apt install figlet
 ```
 ---
-## Como usar
+## Como usar🔥
 Após o você instalar o figlet na sua máquina, você pode testar com
 ```bash
 figlet teste
@@ -14,7 +14,7 @@ figlet teste
 logo você vai ver o figlet em ação👍
 
 ---
-## Criação do desenho
+## Criação do desenho✨
 depois disso tudo basta entrar na pasta Downloads do seu sistema
 ```bash
 cd ~/Downloads
@@ -35,13 +35,12 @@ paste <(figlet -f small "Notas") <(echo "
 ")
 } > desenho.txt
 ```
-
 ---
-
-Pronto, após isso o desenho já pode ser usado, mas é importante
+Pronto, após isso o desenho já pode ser usado, mas é **importante**
 lembrar que precisa está sempre na pasta downloads.
+
 ---
-## Windows
+## Windows👀
 Caso sua distro seja windows ou você esteja com preguiça de ler tudo
 isso, eu criei o arquivo que você precisa aqui:
 
