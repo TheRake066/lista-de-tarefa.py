@@ -46,7 +46,7 @@ def devagar(texto, delay=0.03):
     print()
 time.sleep(1)
 print('MANUAL: ')
-devagar(' Digite 4 para ver a lista;\n digite 3 para adicionar a lista;\n digite 2 para remover algo da lista com base em seu numero.')
+devagar(' Digite 4 para ver a lista;\n digite 3 para adicionar a lista;\n digite 2 para remover algo da lista com base em seu numero;\n digite 1 para alterar os status da tarefa')
 
 def menu():
   print('\n')
