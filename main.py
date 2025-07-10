@@ -5,23 +5,31 @@ import subprocess
 import shelve
 import sys
 import emoji
+import traceback
 
 print('-'*20)
 subprocess.run(["cat","desenho.txt"])
 print('-'*20)
 
 def mostrar_lista():
-
-    devagar(f'  ' + 'LISTA'.center(18, '_'))
-    print('#|' + " ".center(18,' ') + '|')
     with shelve.open('lista') as db:
+        linha_maior = max(
+            len(f"{i+1} - {t.split(':', 1)[0].strip()}: {emoji.emojize(t.split(':', 1)[1].strip())}")
+            for i, t in enumerate(db['tarefas'])
+        )
+
+        devagar(f'  ' + 'LISTA'.center(linha_maior, '_'))
+        print('#|' + " ".center(linha_maior,' ') + '|')
         if db['tarefas'] == []:
-            print(f'#|'+'!Nada criado!'.center(18, ' ') + '|')
+            print(f'#|'+'!Nada criado!'.center(linha_maior, ' ') + '|')
 
         for indice, tarefa in enumerate(db['tarefas'], start=1):
-            print(emoji.emojize(f"#|{f'•{indice} - {tarefa}'.center(35)}|"))
-        print('#|' + " ".center(18,' ') + '|')
-        print('#|' + "".center(18,'_') + '|')
+            tarefa_texto, emoji_codigo = tarefa.split(":", 1)
+            emoji_real = emoji.emojize(emoji_codigo.strip())
+            linha = f'{indice} - {tarefa_texto.strip()}: {emoji_real}'
+            print(f"#|{linha.center(linha_maior)}|")
+        print('#|' + " ".center(linha_maior,' ') + '|')
+        print('#|' + "".center(linha_maior,'_') + '|')
         
 
 def carregamento(titulo='', seg=3):
@@ -55,7 +63,7 @@ while True:
         sistema = int(input('menu ~ '))
   
         if sistema == 4:
-            carregamento(titulo='carregando lista')
+            carregamento(titulo='carregando lista', seg=2)
             print('\n')
             with shelve.open('lista') as db:
                 if 'tarefas' not in db:
@@ -65,20 +73,30 @@ while True:
                     menu()
 
         elif sistema == 3:
-            with shelve.open('lista') as db:
-                sistema1 = input('add: ').lower()
-                if not 'tarefas' in db:
-                    db['tarefas'] = []
-                    devagar('LISTA CRIADA!')
-                existe = any(item.split(':')[0] == sistema1 for item in db['tarefas'])
-            
-                if not existe:
-                    db['tarefas'] = db['tarefas'] + [f'{sistema1}::check_mark_button:']
+            while True:
+                with shelve.open('lista', writeback=True) as db:
+                    if 'tarefas' not in db:
+                        db['tarefas'] = []
+                        devagar('LISTA CRIADA!')
+                    sistema1 = input('[0]cancelar\nadd: ').lower().strip()
+             
+                    if sistema1 == '0':
+                        print('!cancelado!')
+                        break
 
-                time.sleep(1)
-                mostrar_lista()
-                time.sleep(3)
-            menu()
+                    existe = any(item.split(':')[0] == sistema1 for item in db['tarefas'])
+                    
+                    if existe:
+                        print('!ITEM JÁ EXISTE!')
+                        continue
+
+                    db['tarefas'].append(f'{sistema1}: :check_mark_button:')
+                    db.sync()
+                    time.sleep(1)
+                    mostrar_lista()
+                    time.sleep(3)
+                    break
+                menu()
     
         elif sistema == 2:
             while True:
@@ -88,7 +106,7 @@ while True:
                     print('!Invalid Option!')
                 else:
                     remover_item = sistema2 - 1
-                    with shelve.open('lista') as db:            
+                    with shelve.open('lista', writeback=True) as db:            
                         if 0<= remover_item < len(db['tarefas']):
                             aswer = input('Are you sure? Y/n\n~ ').strip().lower()
           
@@ -97,15 +115,48 @@ while True:
                                 break
           
                             elif aswer == 'y':
-                                teste = db['tarefas'].copy()
+                                teste = db['tarefas']
                                 teste.pop(remover_item)
-                                db['tarefas'] = teste
+                                db['tarefas'] =teste
                                 mostrar_lista()
                         else:
                             print('invalid aswer, please! try again')
                     break
+        elif sistema == 1:
+            while True:
+                try:
+                    sistema3 = int(input('numero do item: '))
+                except ValueError:
+                    print('!Invalid Option!')
+                else:
+                    sistema4 = input('\n[1] feito\n[2] pendente\n[3] não feito\nnovo status: ')
+                    substituir_item = sistema3 - 1
+
+                    with shelve.open('lista', writeback=True) as db:
+                        if 0 <= substituir_item < len(db['tarefas']):
+                            item = db['tarefas'][substituir_item]
+                            tarefa, _ = item.split(":", 1)
+
+                            if sistema4 == '1':
+                                novo = f"{tarefa.strip()}: {':check_mark_button:'}"
+                                db['tarefas'][substituir_item] = novo
+
+                            elif sistema4 == '2':
+                                novo = f"{tarefa.strip()}: {':minus:'}"
+                                db['tarefas'][substituir_item] = novo
+                            
+                            elif sistema4 == '3':
+                                novo = f"{tarefa.strip()}: {':cross_mark:'}"
+                                db['tarefas'][substituir_item] = novo
+
+                            db.sync()
+                            mostrar_lista()
+                            break
+                        else:
+                            print('deu merda!')
+                    
         elif sistema == 0:
             carregamento(titulo='saindo', seg=1)
             break
     except ValueError:
-        print('!Precisa ser um numero do Menu!')
+        print(f'!Precisa ser um numero do Menu!')
