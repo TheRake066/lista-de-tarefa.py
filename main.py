@@ -1,4 +1,5 @@
 # requisito: sudo apt install figlet
+# requisito: pip install emoji
 
 import time
 import subprocess
@@ -69,6 +70,7 @@ while True:
                 if 'tarefas' not in db:
                     print('    !LISTA AINDA NÃO CRIADA!\n    !ADICIONE ALGO!')
                 else:
+                    db.close()
                     mostrar_lista()
                     menu()
 
@@ -92,10 +94,11 @@ while True:
 
                     db['tarefas'].append(f'{sistema1}: :check_mark_button:')
                     db.sync()
-                    time.sleep(1)
-                    mostrar_lista()
-                    time.sleep(3)
-                    break
+                db.close()
+                time.sleep(1)
+                mostrar_lista()
+                time.sleep(3)
+                break
                 menu()
     
         elif sistema == 2:
@@ -118,6 +121,7 @@ while True:
                                 teste = db['tarefas']
                                 teste.pop(remover_item)
                                 db['tarefas'] =teste
+                                db.close()
                                 mostrar_lista()
                         else:
                             print('invalid aswer, please! try again')
@@ -150,6 +154,7 @@ while True:
                                 db['tarefas'][substituir_item] = novo
 
                             db.sync()
+                            db.close()
                             mostrar_lista()
                             break
                         else:
